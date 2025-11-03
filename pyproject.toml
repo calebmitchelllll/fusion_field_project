@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fusion-field-project"       # distribution name (can have hyphens)
+version = "0.1.0"
+description = "Interactive magnetic-coil field explorer with a toy plasma beta estimator"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Caleb Mitchell" }]
+dependencies = [
+  "numpy",
+  "scipy",
+  "magpylib",
+  "numba",
+  "pydantic>=2",
+  "matplotlib",
+  "plotly",
+  "streamlit"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "black", "typer[all]"]
+viz3d = ["pyvista", "pyvistaqt"]
+
+[project.scripts]
+fusion-field-cli = "fusion_field_project.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]

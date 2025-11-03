@@ -1,0 +1,11 @@
+typer
+numpy
+scipy
+numba
+pydantic>=2
+matplotlib
+plotly
+streamlit
+pytest
+ruff
+black
