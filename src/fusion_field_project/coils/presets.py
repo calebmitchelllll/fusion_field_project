@@ -1,5 +1,5 @@
 import numpy as np
-from .geometry import Loop, helmholtz_pair
+from .geometry import Loop
 
 def single_loop(radius=0.2, current=100.0, turns=50):
     return [Loop(center=np.array([0,0,0]), axis=np.array([0,1,0]),
@@ -25,3 +25,10 @@ def tokamak_like(R_major=0.35, r_minor=0.08, current=100.0, turns=20, ncoils=24)
                           axis=axis, radius=r_minor,
                           current=current, turns=turns))
     return loops
+
+def helmholtz_pair(radius: float, current: float, turns: int, separation: float):
+    """Two coaxial loops separated by 'separation' along +y/-y."""
+    c = separation / 2.0
+    loop1 = Loop(center=np.array([0, -c, 0]), axis=np.array([0,1,0]), radius=radius, current=current, turns=turns)
+    loop2 = Loop(center=np.array([0,  c, 0]), axis=np.array([0,1,0]), radius=radius, current=current, turns=turns)
+    return [loop1, loop2]

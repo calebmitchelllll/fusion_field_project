@@ -8,39 +8,7 @@ from fusion_field_project.simulation.grid import make_plane_grid
 from fusion_field_project.simulation.biot_savart import field_of_loops
 from fusion_field_project.simulation.metrics import field_magnitude, uniformity_score
 from fusion_field_project.simulation.plasma_model import beta_estimate
-
-# ------------------------------- Presets (inline) ------------------------------
-def preset_single_loop(radius=0.2, current=100.0, turns=50):
-    return [Loop(center=np.array([0.0, 0.0, 0.0]),
-                 axis=np.array([0.0, 1.0, 0.0]),
-                 radius=float(radius), current=float(current), turns=int(turns))]
-
-def preset_helmholtz(radius=0.2, current=100.0, turns=50, separation=None):
-    if separation is None:
-        separation = radius
-    return helmholtz_pair(float(radius), float(current), int(turns), float(separation))
-
-def preset_maxwell_pair(radius=0.2, current=100.0, turns=50):
-    # Maxwell pair: separation = sqrt(3) * radius for better uniformity
-    sep = float(np.sqrt(3.0) * radius)
-    return helmholtz_pair(float(radius), float(current), int(turns), sep)
-
-def preset_tokamak_like(R_major=0.35, r_minor=0.08, current=100.0, turns=20, ncoils=24):
-    """
-    Rough torus: ncoils circular loops around a major radius R_major.
-    Each loop axis is tangent to the torus path in the x–z plane.
-    """
-    loops = []
-    for k in range(int(ncoils)):
-        phi = 2*np.pi * k / int(ncoils)
-        cx, cz = float(R_major)*np.cos(phi), float(R_major)*np.sin(phi)
-        axis = np.array([-np.sin(phi), 0.0, np.cos(phi)])  # tangent, already unit length
-        loops.append(Loop(center=np.array([cx, 0.0, cz]),
-                          axis=axis,
-                          radius=float(r_minor),
-                          current=float(current),
-                          turns=int(turns)))
-    return loops
+from fusion_field_project.coils.presets import single_loop, maxwell_pair, tokamak_like
 
 # ------------------------------- UI -------------------------------------------
 st.set_page_config(page_title="Fusion Field Project", layout="wide")
@@ -79,16 +47,16 @@ if preset == "Tokamak-ish":
 
 # ------------------------------- Build coils ----------------------------------
 if preset == "Single loop":
-    loops = preset_single_loop(radius=radius, current=current, turns=turns)
+    loops = single_loop(radius=radius, current=current, turns=turns)
 
 elif preset == "Helmholtz":
-    loops = preset_helmholtz(radius=radius, current=current, turns=turns, separation=separation)
+    loops = helmholtz_pair(radius=radius, current=current, turns=turns, separation=separation)
 
 elif preset == "Maxwell pair":
-    loops = preset_maxwell_pair(radius=radius, current=current, turns=turns)
+    loops = maxwell_pair(radius=radius, current=current, turns=turns)
 
 elif preset == "Tokamak-ish":
-    loops = preset_tokamak_like(R_major=R_major, r_minor=r_minor, current=current, turns=turns, ncoils=ncoils)
+    loops = tokamak_like(R_major=R_major, r_minor=r_minor, current=current, turns=turns, ncoils=ncoils)
 
 else:  # Custom
     mode = st.sidebar.radio("Custom geometry", ["Single Loop", "Pair (Helmholtz-style)"], horizontal=True)
